@@ -10,8 +10,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <conio.h>
-#include <unistd.h> 
 FILE * inf ; 
 #define MAXT 1000
 #define MAXC 1500
@@ -23,7 +21,6 @@ unsigned long int rseed = 1 ;
 
 void errout ( char * txt ) {
     fprintf ( stderr , "Can't run:\n    %s\n(press key to exit)\n" , txt ) ;
-    getch() ; 
     exit ( 0 ) ; 
 }
 
