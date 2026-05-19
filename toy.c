@@ -1,28 +1,32 @@
-/***************************************************\
-|       A Toy program for phylogenetic analysis     |
-|            by Pablo A. Goloboff (2026)            |
-|                                                   |
-|           Intended for pedagogic use              |
-|           Feel free to use or modify,             |
-|        just acknowledge authorsip if you do.      |
-\***************************************************/
+/*********************************************************************\
+|           A Toy program for phylogenetic analysis                   |
+|                by Pablo A. Goloboff (2026)                          |
+|         =============================================               |
+|               Intended for pedagogic use                            |
+| Feel free to use or modify; if you do, please acknowledge authorsip |
+|         =============================================               |
+|     The tree-printing algorithm is taken (simplified to handle      |
+|     binary trees only) from Goloboff (2022 ISBN 9780367420277)      |
+|   https://www.lillo.org.ar/phylogeny/eduscripts/treeplotting.pic    |
+\*********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-FILE * inf ; 
+FILE * inf , * tfile ; 
 #define MAXT 1000
 #define MAXC 1500
 #define MISSING 1023 
-int nt , nc , matrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = 10e9 ; 
+void read_tree ( char * ) , preplot ( void ) , plot ( int ) ; 
+int nt , nc , matrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = 10e9 , dospr = 0 , wagstart = 1 , curnodin ; 
 int anc[2*MAXT] , lef[2*MAXT] , rig[2*MAXT] , sis[2*MAXT] , oplist[2*MAXT] , trylist[2*MAXT] , rootlist[2*MAXT] , ladd[2*MAXT] ;
+int atlin[2*MAXT] , gpsiz[2*MAXT] , btrack[2*MAXT] , rho = 218 , el = 192 , vert = 179 , hor = 196 , up = 193 , hook = 180 , linsdone = 0 ; 
 char names[ MAXT ] [ 50 ] ;
 unsigned long int rseed = 1 ;
 
 void errout ( char * txt ) {
-    fprintf ( stderr , "Can't run:\n    %s\n(press key to exit)\n" , txt ) ;
-    exit ( 0 ) ; 
-}
+    fprintf ( stderr , "Can't run:\n    %s\n" , txt ) ;
+    exit ( 0 ) ; }
 
 void save ( int i ) {
     if ( i < nt ) {
@@ -33,8 +37,7 @@ void save ( int i ) {
     save( lef[ i ] ) ; 
     save( rig [ i ] ) ; 
     printf( ")" ) ;
-    if ( i == nt ) printf ( ";\nproc/;" ) ;
-}
+    if ( i == nt ) printf ( ";\nproc/;\n" ) ; }
 
 void tbreroot ( int old , int new ) {
    int i , j , k , m , n , nx , first ;
@@ -55,8 +58,7 @@ void tbreroot ( int old , int new ) {
    sis [ sis [ n ] = m ] = n ;
    anc [ lef [ old ] = new ] = anc [ rig [ old ] = first ] = old ;
    sis [ sis [ new ] = first ] = new ; 
-   return ;
-}
+   return ; }
 
 void inzert( int what , int root , int where ) {
     int dasis , danc , join ; 
@@ -72,16 +74,14 @@ void inzert( int what , int root , int where ) {
     anc [ join ] = danc ;
     lef [ danc ] = dasis ;
     rig [ danc ] = join ;
-    sis [ sis [ dasis ] = join ] = dasis ; 
-}    
+    sis [ sis [ dasis ] = join ] = dasis ; }    
 
 void setmask( void ) {
     int i ;
     for ( i = 0 ; i < 256 ; ++ i ) inmask[ i ] = 0 ;
     for ( i = 0 ; i < 10 ; ++ i ) inmask[ '0' + i ] = 1 << i ;
     inmask[ '?' ] = inmask[ '-' ] = MISSING  ;
-    inmask[ '[' ] = 1 ; 
-}
+    inmask[ '[' ] = 1 ; }
     
 void readata ( void ) {
     int a , b , ispoly ;
@@ -108,8 +108,7 @@ void readata ( void ) {
                else matrix[ a ] [ b ] |= MISSING ;
                if ( !ispoly ) ch = ']' ;
                else fscanf ( inf , " %c" , &ch ) ; }
-          if ( !a ) unmat[ a ] [ b ] = matrix[ a ] [ b ] ; }}
-}
+          if ( !a ) unmat[ a ] [ b ] = matrix[ a ] [ b ] ; }}}
 
 int listabove( int * list , int from , int doterms ) {
     int * done , * todo , at ;
@@ -120,8 +119,7 @@ int listabove( int * list , int from , int doterms ) {
        if ( at >= nt ) {
           if ( lef [ at ] >= nt || doterms ) * todo ++ = lef [ at ] ; 
           if ( rig [ at ] >= nt || doterms ) * todo ++ = rig [ at ] ; }}
-    return done - list ;        
-}
+    return done - list ; }
 
 int fichop( int passes , int from ) {
     int i , n , b , at , w , x , steps = 0 , bak , blow ;
@@ -151,8 +149,7 @@ int fichop( int passes , int from ) {
                else {
                    matrix[ at ] [ b ] |= matrix[ blow ] [ b ] & bakmat[ at ] [ b ] ;
                    unmat [ at ] [ b ] = matrix[ at ] [ b ] | matrix[ blow ] [ b ] ; }}}
-    return steps ;    
-}        
+    return steps ; }        
 
 int testamove ( int what , int root , int where ) {
     int b , steps = 0 ;
@@ -161,8 +158,7 @@ int testamove ( int what , int root , int where ) {
             if ( ! ( matrix[ root ] [ b ] & unmat[ where ] [ b ] ) ) ++ steps ; }
         else 
             if ( ! ( unmat[ root ] [ b ] & unmat[ where ] [ b ] ) ) ++ steps ;
-    return steps ; 
-}
+    return steps ; }
 
 void randomize( void ) {
    int i , n , q , * lp = ladd + 1 , left = nt - 1 ; 
@@ -173,16 +169,15 @@ void randomize( void ) {
       q = * lp ; 
       * lp = lp [ n = rand () % left -- ] ;
       lp [ n ] = q ;
-      ++ lp ; }
-}
+      ++ lp ; }}
 
 void nitnet( void ) {
     randomize () ;
     anc[ lef [ nt ] = 0 ] = anc [ rig[ nt ] = nt + 1 ] = nt ;
     anc[ lef[ nt + 1 ] = ladd [ 1 ] ] = anc[ rig[ nt + 1 ] = ladd [ 2 ] ] = nt + 1 ;
     sis [ sis[ 0 ] = nt + 1 ] = 0 ;
-    sis [ sis [ ladd [ 1 ] ] = ladd [ 2 ] ] = ladd [ 1 ] ; 
-}
+    sis [ sis [ ladd [ 1 ] ] = ladd [ 2 ] ] = ladd [ 1 ] ; }
+
 void wagner( void ) {
    int i , now , at , next = 3 , this , besloc , curnod = nt + 2 ; 
    nitnet () ;
@@ -198,8 +193,7 @@ void wagner( void ) {
               if ( !( globest = this ) ) break ; }}
        inzert( now , -1 , besloc ) ; }
    globest = fichop ( 1 , nt ) ; 
-   fprintf ( stderr , "Formed a Wagner tree of %i steps\n" , globest ) ; 
-}    
+   fprintf ( stderr , "Formed a Wagner tree of %i steps\n" , globest ) ; }    
 
 void unzert( cut ) {
     int danc = anc[ cut ] , ddanc , brother , cousin ;
@@ -210,8 +204,7 @@ void unzert( cut ) {
     lef[ ddanc ] = brother ;
     rig [ ddanc ] = cousin ;
     sis [ sis [ cousin ] = brother ] = cousin ;
-    anc [ brother ] = anc [ cousin ] = ddanc ;
-}    
+    anc [ brother ] = anc [ cousin ] = ddanc ; }    
 
 void tbrswap( void ) {
     int i , j , rounds , cut = 0 , besroot , besloc , this , nitroot , nitloc , nroots , nlocs , lasreport = 0 , nmoves = 0 , nswitches = 0 ; 
@@ -248,6 +241,7 @@ void tbrswap( void ) {
             else nroots = listabove( rootlist , cut , 1 ) ;
             fichop ( 2 , nt ) ;
             if ( cut >= nt ) fichop ( 2 , cut ) ;
+            if ( dospr ) nroots = 3 ; 
             globest = 10e9 ; 
             globest = testamove ( cut , cut , nitloc ) ;
             for ( i = 2 ; i < nroots ; ++ i )
@@ -265,24 +259,119 @@ void tbrswap( void ) {
                tbreroot( cut , besloc ) ; }
         else 
             inzert( cut , besroot , besloc ) ; }
-  globest = fichop( 1 , nt ) ; 
-  fprintf ( stderr , "\rCompleted TBR (%i moves, %i accepted), best score %i\n" , nmoves , nswitches , globest ) ; 
-}
+  globest = fichop( 1 , nt ) ;
+  if ( dospr ) fprintf ( stderr , "\rCompleted SPR (%i moves, %i accepted), best score %i\n" , nmoves , nswitches , globest ) ; 
+  else fprintf ( stderr , "\rCompleted TBR (%i moves, %i accepted), best score %i\n" , nmoves , nswitches , globest ) ; }
 
 void main ( int argc , char ** argv ) {
     int doswap = 1 ; 
     clock_t initime ; 
     if ( argc == 1 ) errout ( "Give file name" ) ;
     if ( ( inf = fopen ( argv[ 1 ] , "rb" ) ) == NULL ) errout ( "Can't open file" ) ;
-    if ( argc > 2 && argv[ 2 ] [ 0 ] != '-' ) 
+    if ( argc > 2 && argv[ 2 ] [ 0 ] != '-' && argv[ 2 ] [ 0 ] != '+' ) 
         rseed = atoi ( argv[ 2 ] ) ;
-    if ( argv[ argc - 1 ][ 0 ] == '-' ) doswap = 0 ;     
     readata () ;
+    if ( argv[ argc - 1 ][ 0 ] == '-' ) doswap = 0 ; 
+    if ( argv[ argc - 1 ][ 0 ] == '/' ) dospr = 1 ; 
+    if ( argv[ argc - 1 ][ 0 ] == '+' ) {
+        wagstart = 0 ; 
+        read_tree ( argv[ argc - 1 ] + 1 ) ; }
     initime = clock () ; 
-    wagner () ;
+    if ( wagstart ) wagner () ;
+    else {
+        int len = fichop ( 1 , nt ) ;
+        fprintf ( stderr , "Start swapping from user tree (%i steps)\n" , len ) ; }
     if ( doswap ) tbrswap () ; 
     fprintf ( stderr , "Time used: %.2f sec\n" , ( double ) ( clock() - initime ) / CLK_TCK ) ;
     fflush ( stderr ) ; 
     save( nt ) ;
-}    
+    preplot () ;
+    plot ( nt ) ; }    
+
+/*** SOME EXTRA GOODIES : read trees in parenthetical notation, draw tree diagrams ***/
+
+void add ( int what , int where ) {
+    anc [ what ] = where ; 
+    if ( lef [ where ] < 0 ) lef[ where ] = what ;
+    else if ( rig[ where ] < 0 ) sis [ sis [ rig [ where ] = what ] = lef[ where ] ] = what ;
+         else errout ( "Tree has polytomies" ) ; }
+
+void treein ( int at ) {
+    char c ;
+    int i ;
+    while ( 1 ) {
+        fscanf ( tfile , " %c" , &c ) ;
+        if ( c == ')' ) return ;
+        if ( c == '(' ) {
+            if ( ++ curnodin >= 2*nt-1 ) errout ( "Too many parentheses" ) ;
+            add ( curnodin , at ) ;
+            treein ( curnodin ) ; }
+        else {
+            ungetc ( c , tfile ) ;
+            fscanf ( tfile , "%i" , &i ) ;
+            if ( i >= nt ) errout ( "Taxon number" ) ;
+            add ( i , at ) ; }}}             
+    
+void read_tree ( char * fnam ) {
+    int i ;
+    char command[20] ; 
+    if ( ( tfile = fopen ( fnam , "rb" ) ) == NULL ) errout ( "Tree file" ) ;
+    for ( i = 0 ; i < 2*nt-1 ; ++ i )
+        anc[ i ] = lef[ i ] = rig[ i ] = sis[ i ] = -1 ;
+    fscanf ( tfile , " %s" , &command ) ;
+    if ( strcmp ( command , "tread" ) ) errout ( "No \"tread\" in file" ) ;
+    i = ' ' ; while ( isspace ( i ) ) i = getc ( tfile ) ;
+    if ( i == 39 ) {
+        i = ' ' ; while ( i != 39 ) i = getc ( tfile ) ;
+        i = ' ' ; while ( isspace ( i ) ) i = getc ( tfile ) ; }
+    if ( i != '(' ) errout ( "Parentheses" ) ;
+    treein ( curnodin = nt ) ; }
+
+void initlines ( int which ) {  // Find out at which line every terminal is printed 
+  if ( which >= nt ) {
+     initlines ( lef [ which ] ) ;  
+     initlines ( rig [ which ] ) ;  
+     return ; }
+  atlin [ which ] = ++ linsdone ; }     
+
+void calculines ( int which ) {  // Find out at which line every internal node is printed 
+  if ( which < nt ) return ; 
+  calculines ( lef [ which ] ) ;  
+  calculines ( rig [ which ] ) ; 
+  atlin [ which ] = ( 1 + atlin [ lef [ which ] ] +  atlin [ rig [ which ] ] ) / 2 ; }     
+
+void preplot ( void ) {
+    int i , m , n ;
+    for ( i = 0 ; i < nt ; ++ i ) gpsiz[ i ] = 1 ;
+    for ( n = listabove( trylist , nt , 0 ) ; n -- ; ) { // rotate branches for aesthetics
+        i = trylist[ n ] ; 
+        if ( gpsiz[ lef[ i ]] > gpsiz[ rig [ i ]] ) { m = lef[ i ] ; lef[ i ] = rig [ i ] ; rig [ i ] = m ; }
+        gpsiz[ i ] = gpsiz[ lef[ i ]] + gpsiz[ rig [ i ]] ; }
+    initlines ( nt ) ;
+    calculines ( nt ) ;
+    linsdone = 0 ; }
+
+void plot ( int which ) {
+  int i = which , j , n , joint , * retrop = btrack ;
+  if ( which >= nt ) {
+      plot ( lef[ which ] ) ;
+      plot ( rig[ which ] ) ;  
+      return ; }
+  while ( i != nt ) * retrop ++ = i = anc [ i ] ; 
+  linsdone ++ ; 
+  while ( retrop > btrack ) {
+      j = * -- retrop ;
+      if ( linsdone == atlin [ j ] ) printf( "%c%c" , hor , hor ) ; 
+      else printf ( "  " ) ; 
+      joint = ' ' ; 
+      if ( linsdone <= atlin [ rig [ j ] ] ) {
+          if ( linsdone >= atlin [ lef [ j ] ] ) joint = vert ; 
+          if ( linsdone == atlin [ j ] ) joint = hook ; 
+          for ( i = lef [ j ] , n = 0 ; n < 2 ; i = sis [ i ] , n ++ ) 
+            if ( atlin [ i ] == linsdone ) {
+              if ( i == lef [ j ] ) joint = rho ; 
+              else if ( gpsiz[ j ] == 2 ) joint = up ; 
+                   else joint = el ; }}
+      printf ( "%c%" , joint ) ; }
+  printf( "%c%c %s\n" , hor , hor , names[ which ] ) ; }  
 
