@@ -5,9 +5,9 @@
 |               Intended for pedagogic use                            |
 | Feel free to use or modify; if you do, please acknowledge authorsip |
 |         =============================================               |
-|     The tree-printing algorithm is taken (simplified to handle      |
-|     binary trees only) from Goloboff (2022 ISBN 9780367420277)      |
-|   https://www.lillo.org.ar/phylogeny/eduscripts/treeplotting.pic    |
+|  The tree-printing algorithm is taken (simplified to handle         |
+|   binary trees only) from Goloboff (2022 ISBN 9780367420277)        |
+| https://www.lillo.org.ar/phylogeny/eduscripts/treeplotting.pic      |
 \*********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -264,18 +264,20 @@ void tbrswap( void ) {
   else fprintf ( stderr , "\rCompleted TBR (%i moves, %i accepted), best score %i\n" , nmoves , nswitches , globest ) ; }
 
 void main ( int argc , char ** argv ) {
-    int doswap = 1 ; 
+    int doswap = 1 , dotree = 0 , i ; 
     clock_t initime ; 
     if ( argc == 1 ) errout ( "Give file name" ) ;
     if ( ( inf = fopen ( argv[ 1 ] , "rb" ) ) == NULL ) errout ( "Can't open file" ) ;
     if ( argc > 2 && argv[ 2 ] [ 0 ] != '-' && argv[ 2 ] [ 0 ] != '+' ) 
         rseed = atoi ( argv[ 2 ] ) ;
     readata () ;
-    if ( argv[ argc - 1 ][ 0 ] == '-' ) doswap = 0 ; 
-    if ( argv[ argc - 1 ][ 0 ] == '/' ) dospr = 1 ; 
-    if ( argv[ argc - 1 ][ 0 ] == '+' ) {
-        wagstart = 0 ; 
-        read_tree ( argv[ argc - 1 ] + 1 ) ; }
+    for ( i = 2 ; i < argc ; ++ i ) { 
+        if ( argv[ i ][ 0 ] == '-' ) doswap = 0 ; 
+        if ( argv[ i ][ 0 ] == '/' ) dospr = 1 ; 
+        if ( argv[ i ][ 0 ] == '+' ) {
+            wagstart = 0 ; 
+            read_tree ( argv[ i ] + 1 ) ; }
+        if ( argv[ i ][ 0 ] == 't' ) dotree = 1 ; }
     initime = clock () ; 
     if ( wagstart ) wagner () ;
     else {
@@ -285,8 +287,9 @@ void main ( int argc , char ** argv ) {
     fprintf ( stderr , "Time used: %.2f sec\n" , ( double ) ( clock() - initime ) / CLK_TCK ) ;
     fflush ( stderr ) ; 
     save( nt ) ;
-    preplot () ;
-    plot ( nt ) ; }    
+    if ( dotree ) {
+       preplot () ;
+       plot ( nt ) ; }}
 
 /*** SOME EXTRA GOODIES : read trees in parenthetical notation, draw tree diagrams ***/
 
