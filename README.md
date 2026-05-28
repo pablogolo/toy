@@ -10,7 +10,7 @@ Data format is a simple TNT file (starting with "xread" on top). Results are wri
 
     toy data > outfile 
   
-A modified version, INCTOY, in inctoy.c, with an extra 50 lines or so, in the fixupdn() function. This uses incremental reoptimization during the clipping/unclipping phasaes, which cuts the times needed for completing TBR to about half. I am not aware of any other open-source program that uses incremental reoptimization, so this serves to illustrate both the advantage of using it (when compared to the more vanilla toy.c), and the subtleties involved. That code is compiled in the same way: 
+You can find a modified version, INCTOY, in inctoy.c, with an extra 50 lines or so, in the fixupdn() function. This uses incremental reoptimization during the clipping/unclipping phasaes, which cuts the times needed for completing TBR to about half. I am not aware of any other open-source program that uses incremental reoptimization, so this serves to illustrate both the advantage of using it (when compared to the more vanilla toy.c), and the subtleties involved. That code is compiled in the same way: 
 
      gcc -O2 -o inctoy inctoy.c 
      
