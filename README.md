@@ -14,4 +14,4 @@ You can find a modified version, INCTOY, in inctoy.c, with an extra 50 lines or 
 
      gcc -O2 -o inctoy inctoy.c 
      
-Finally, in the other end of the spectrum, MINITOY shows the simplest possible: just a Wagner tree plus TBR, no randomization of addition sequence, no error checking, no propgress report, no tree-reading or drawing. This is what you find in minitoy.c (only 200 lines of code; never saw a program that small that could do an actual phylogenetic analysis!). As this does not use incremental optimization, it has about the same speed as TOY. 
+Finally, in the other end of the spectrum, MINITOY shows the simplest possible: just a Wagner tree plus TBR, no randomization of addition sequence, no error checking, no progress report, no tree-reading or drawing. This is what you find in minitoy.c (only 200 lines of code; never saw a program that small that could do an actual phylogenetic analysis!). As this does not use incremental optimization, it has about the same speed as TOY. 
