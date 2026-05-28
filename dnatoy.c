@@ -17,13 +17,13 @@
 FILE * inf , * tfile ; 
 #define MAXT 1000
 #define MAXC 1500
-#define MISSING 1023
+#define MISSING 15
 #define BIGINT 1000000000
 void read_tree ( char * ) , preplot ( void ) , plot ( int ) ; 
-int nt , nc , matrix[ 2*MAXT ][ MAXC ] , upmatrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = BIGINT , dospr = 0 , wagstart = 1 , curnodin ; 
+int nt , nc , globest = BIGINT , dospr = 0 , wagstart = 1 , curnodin ; 
 int anc[2*MAXT] , lef[2*MAXT] , rig[2*MAXT] , sis[2*MAXT] , oplist[2*MAXT] , trylist[2*MAXT] , rootlist[2*MAXT] , ladd[2*MAXT] ;
 int atlin[2*MAXT] , gpsiz[2*MAXT] , btrack[2*MAXT] , rho = 218 , el = 192 , vert = 179 , hor = 196 , up = 193 , hook = 180 , linsdone = 0 ; 
-char names[ MAXT ] [ 50 ] ;
+char names[ MAXT ] [ 50 ] , matrix[ 2*MAXT ][ MAXC ] , upmatrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] ;
 unsigned long int rseed = 1 ;
 void fixupdn( int , int , int ) ; 
 
@@ -82,9 +82,21 @@ void inzert( int what , int root , int where ) {
 void setmask( void ) {
     int i ;
     for ( i = 0 ; i < 256 ; ++ i ) inmask[ i ] = 0 ;
-    for ( i = 0 ; i < 10 ; ++ i ) inmask[ '0' + i ] = 1 << i ;
-    inmask[ '?' ] = inmask[ '-' ] = MISSING  ;
-    inmask[ '[' ] = 1 ; }
+    inmask [ 'a' ] = inmask [ 'A' ] = 1 ; 
+    inmask [ 'g' ] = inmask [ 'G' ] = 2 ; 
+    inmask [ 'c' ] = inmask [ 'C' ] = 4 ;
+    inmask [ 'u' ] = inmask [ 'U' ] = inmask [ 't' ] = inmask [ 'T' ] = 8 ; 
+    inmask [ 'R' ] = inmask [ 'r' ] = inmask [ 'a' ] | inmask [ 'g' ] ; 
+    inmask [ 'Y' ] = inmask [ 'y' ] = inmask [ 't' ] | inmask [ 'c' ] ; 
+    inmask [ 'W' ] = inmask [ 'w' ] = inmask [ 'a' ] | inmask [ 't' ] ; 
+    inmask [ 'S' ] = inmask [ 's' ] = inmask [ 'c' ] | inmask [ 'g' ] ; 
+    inmask [ 'M' ] = inmask [ 'm' ] = inmask [ 'a' ] | inmask [ 'c' ] ; 
+    inmask [ 'K' ] = inmask [ 'k' ] = inmask [ 'g' ] | inmask [ 't' ] ; 
+    inmask [ 'B' ] = inmask [ 'b' ] = inmask [ 'c' ] | inmask [ 'g' ] | inmask [ 't' ] ; 
+    inmask [ 'D' ] = inmask [ 'd' ] = inmask [ 'a' ] | inmask [ 'g' ] | inmask [ 't' ] ; 
+    inmask [ 'H' ] = inmask [ 'h' ] = inmask [ 'a' ] | inmask [ 'c' ] | inmask [ 't' ] ; 
+    inmask [ 'V' ] = inmask [ 'v' ] = inmask [ 'a' ] | inmask [ 'c' ] | inmask [ 'g' ] ; 
+    inmask [ 'N' ] = inmask [ 'n' ] = inmask [ '-' ] = inmask [ '?' ] = MISSING ; }
     
 void readata ( void ) {
     int a , b , ispoly ;

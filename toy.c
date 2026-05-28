@@ -1,24 +1,26 @@
-/*********************************************************************\
-|           A Toy program for phylogenetic analysis                   |
-|                by Pablo A. Goloboff (2026)                          |
-|         =============================================               |
-|               Intended for pedagogic use                            |
-| Feel free to use or modify; if you do, please acknowledge authorsip |
-|         =============================================               |
-|  The tree-printing algorithm is taken (simplified to handle         |
-|   binary trees only) from Goloboff (2022 ISBN 9780367420277)        |
-| https://www.lillo.org.ar/phylogeny/eduscripts/treeplotting.pic      |
-\*********************************************************************/
+/**********************************************************************\
+|           A Toy program for phylogenetic analysis                    |
+|                by Pablo A. Goloboff (2026)                           |
+|         =============================================                |
+|               Intended for pedagogic use                             |
+| Feel free to use or modify; if you do, please acknowledge authorship |
+|         =============================================                |
+|    The tree-printing algorithm is taken (simplified to handle        |
+|     binary trees only) from Goloboff (2022 ISBN 9780367420277)       |
+|   https://www.lillo.org.ar/phylogeny/eduscripts/treeplotting.pic     |
+\**********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h> 
 FILE * inf , * tfile ; 
 #define MAXT 1000
 #define MAXC 1500
-#define MISSING 1023 
+#define MISSING 1023
+#define BIGINT 1000000000
 void read_tree ( char * ) , preplot ( void ) , plot ( int ) ; 
-int nt , nc , matrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = 10e9 , dospr = 0 , wagstart = 1 , curnodin ; 
+int nt , nc , matrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = BIGINT , dospr = 0 , wagstart = 1 , curnodin ; 
 int anc[2*MAXT] , lef[2*MAXT] , rig[2*MAXT] , sis[2*MAXT] , oplist[2*MAXT] , trylist[2*MAXT] , rootlist[2*MAXT] , ladd[2*MAXT] ;
 int atlin[2*MAXT] , gpsiz[2*MAXT] , btrack[2*MAXT] , rho = 218 , el = 192 , vert = 179 , hor = 196 , up = 193 , hook = 180 , linsdone = 0 ; 
 char names[ MAXT ] [ 50 ] ;
@@ -183,7 +185,7 @@ void wagner( void ) {
    nitnet () ;
    while ( next < nt ) {
        anc[ now = ladd [ next ++ ] ] = curnod ++ ;
-       globest = 10e9 ;
+       globest = BIGINT ;
        fichop ( 2 , nt ) ; 
        for ( i = listabove( trylist , sis[ 0 ] , 1 ) ; i -- ; ) {
           at = trylist[ i ] ;
@@ -224,7 +226,7 @@ void tbrswap( void ) {
         if ( !nitloc ) {
             j = listabove( trylist , cut , 1 ) ;
             fichop ( 2 , sis[ 0 ] ) ;
-            globest = 10e9 ;
+            globest = BIGINT ;
             globest = testamove( 0 , 0 , cut ) ;
             for ( i = 1 ; i < j ; ++ i ) {
                ++ nmoves ; 
@@ -242,7 +244,7 @@ void tbrswap( void ) {
             fichop ( 2 , nt ) ;
             if ( cut >= nt ) fichop ( 2 , cut ) ;
             if ( dospr ) nroots = 3 ; 
-            globest = 10e9 ; 
+            globest = BIGINT ; 
             globest = testamove ( cut , cut , nitloc ) ;
             for ( i = 2 ; i < nroots ; ++ i )
                for ( j = 0 ; j < nlocs ; ++ j ) {
@@ -284,7 +286,7 @@ void main ( int argc , char ** argv ) {
         int len = fichop ( 1 , nt ) ;
         fprintf ( stderr , "Start swapping from user tree (%i steps)\n" , len ) ; }
     if ( doswap ) tbrswap () ; 
-    fprintf ( stderr , "Time used: %.2f sec\n" , ( double ) ( clock() - initime ) / CLK_TCK ) ;
+    fprintf ( stderr , "Time used: %.2f sec\n" , ( double ) ( clock() - initime ) / CLOCKS_PER_SEC ) ;
     fflush ( stderr ) ; 
     save( nt ) ;
     if ( dotree ) {

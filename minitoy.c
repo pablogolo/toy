@@ -4,13 +4,9 @@ FILE * inf ;
 #define MAXT 1000
 #define MAXC 1500
 #define MISSING 1023 
-#define TBR_MOVE( x , y , z ) \
-    { if ( ( this = testamove( x , y , z ) ) < globscore ) { \
-         rounds = 1 ;                                        \
-         besroot = y ;                                       \
-         besloc = z ;                                        \
-         globscore = this ; }}
-int nt , nc , matrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = 10e9 , dospr = 0 , wagstart = 1 , curnodin , rseed = 1 , globscore ; 
+#define BIGINT 1000000000
+#define TBR_MOVE( x , y , z ) { if ( ( this = testamove( x , y , z ) ) < globscore ) { rounds = 1 ; besroot = y ; besloc = z ; globscore = this ; }}
+int nt , nc , matrix[ 2*MAXT ][ MAXC ] , unmat[ 2*MAXT ][ MAXC ] , bakmat[ 2*MAXT ][ MAXC ] , inmask[256] , globest = BIGINT , dospr = 0 , wagstart = 1 , curnodin , rseed = 1 , globscore ; 
 int anc[2*MAXT] , lef[2*MAXT] , rig[2*MAXT] , sis[2*MAXT] , oplist[2*MAXT] , trylist[2*MAXT] , rootlist[2*MAXT] , ladd[2*MAXT] ;
 char names[ MAXT ] [ 50 ] ;
 
@@ -147,7 +143,7 @@ void wagner( void ) {
    sis [ sis [ ladd [ 1 ] ] = ladd [ 2 ] ] = ladd [ 1 ] ; 
    while ( next < nt ) {
        anc[ now = ladd [ next ++ ] ] = curnod ++ ;
-       globscore = 10e9 ;
+       globscore = BIGINT ;
        fichop ( 2 , nt ) ; 
        for ( i = listabove( trylist , sis[ 0 ] , 1 ) ; i -- && globscore ; ) 
           if ( ( this = testamove( now , now , trylist[ i ] ) ) < globscore ) {
@@ -173,7 +169,7 @@ void tbrswap( void ) {
         if ( cut == nt ) continue ;
         if ( cut > nt ) nitroot = besroot = lef [ cut ] ;
         else nitroot = besroot = cut ;
-        globscore = 10e9 ; 
+        globscore = BIGINT ; 
         if ( ! ( nitloc = besloc = sis[ cut ] ) ) {
             fichop ( 2 , sis[ 0 ] ) ;
             globscore = testamove( 0 , 0 , cut ) ;
