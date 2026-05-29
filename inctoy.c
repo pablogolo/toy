@@ -201,7 +201,7 @@ void wagner( void ) {
    globest = fichop ( 1 , nt ) ; 
    fprintf ( stderr , "Formed a Wagner tree of %i steps\n" , globest ) ; }    
 
-void unzert( cut ) {
+void unzert( int cut ) {
     int danc = anc[ cut ] , ddanc , brother , cousin ;
     if ( danc == nt ) return ; 
     ddanc = anc [ danc ] ;

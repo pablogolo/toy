@@ -151,7 +151,7 @@ void wagner( void ) {
               besloc = trylist[ i ] ; }
        inzert( now , -1 , besloc ) ; }}    
 
-void unzert( cut ) {
+void unzert( int cut ) {
     int danc = anc[ cut ] , ddanc , brother , cousin ;
     if ( danc == nt ) return ; 
     ddanc = anc [ danc ] ;
