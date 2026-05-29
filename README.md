@@ -1,5 +1,7 @@
 All the programs included here are small, minimalistic standalone programs, intended to illustrate general principles of doing Wagner trees and branch-swapping. 
 
+These programs (in increasing order of size/efficiency) are MINITOY / TOY / INCTOY / DNATOY / PARATOY.
+
 TOY reads a dataset, does a Wagner tree + TBR, saves final tree in parenthetical notation (TNT format) and [optionally] as a tree-diagram. 
 
 Compile with 
@@ -29,5 +31,7 @@ You can find a modified version, INCTOY, in inctoy.c, with an extra 50 lines or 
 DNATOY, a version identical to this (in dnatoy.c, also using incremental optimization) differs only in reading DNA data (in IUPAC format), which some users may prefer. Compile with, 
 
     gcc -O3 -o dnatoy dnatoy.c 
+
+The most efficient version is PARATOY, which uses Farris' (1996) methods for parallel optimization, jointly with all the other algorithms of the other versions. This is the longest version (500 loc), but also the fastest, with a speed comparable to that of PAUP* (but still substantially slower than TNT, which uses other algorithms to speed up branch-swapping).
 
 Finally, in the other end of the spectrum, MINITOY shows the simplest possible: just a Wagner tree plus TBR, no randomization of addition sequence, no error checking, no progress report, no tree-reading or drawing. This is what you find in minitoy.c (only 200 lines of code; never saw a program that small that could do an actual phylogenetic analysis!). As this does not use incremental optimization, it is slower than INCTOY and DNATOY, with about the same speed as TOY. 
