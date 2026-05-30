@@ -22,6 +22,7 @@ To run the example datasets (in a folder of their own), you can try:
     toy zilla.tnt > result.tre 
     inctoy zilla.tnt > result.tre 
 or 
+
     dnatoy dnazilla.tnt > result.tre 
     paratoy dnazilla.tnt > result.tre 
 
