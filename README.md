@@ -29,6 +29,7 @@ or
 The resulting tree-file (result.tre) is ready to open with TNT.
 
 Command-line options are: 
+
     N        a number following the dataset: random seed for the addition sequence (0 = as is)
     -        no branch-swapping (just a Wagner tree)
     +xxxx    read a tree in parenthetical notation from file "xxxx" (must be binary, 
