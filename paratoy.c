@@ -222,8 +222,8 @@ int testamove ( int what , int root , int where ) {  // For very large datasets,
         y = * one ++ & * other ++ ;
         x = TOP & ~ ( x | ( ( x & BOT ) + BOT ) ) ;
         y = TOP & ~ ( y | ( ( y & BOT ) + BOT ) ) ;
-        z = x | y ; 
-        if ( z ) {
+        z = x | y ;  // Advantage: if the steps of odd and even words are in different
+        if ( z ) {   //            fields, process two words accessing "stepsin" only once...
             steps += stepsin[ 65535 & ( z | ( z >> 17 ) | ( z >> 34 ) | ( z >> 51 ) ) ] ;
             z = x & y ;
             if ( z ) steps += stepsin[ 65535 & ( z | ( z >> 17 ) | ( z >> 34 ) | ( z >> 51 ) ) ] ; }}
@@ -236,7 +236,7 @@ int testamove ( int what , int root , int where ) {
         if ( what == root && what < nt ) 
              x = matrix[ root ] [ b ] & unmat[ where ] [ b ] ;
         else x = unmat[ root ] [ b ] & unmat[ where ] [ b ] ;
-        x = TOP & ~ ( x | ( ( x & BOT ) + BOT ) ) ;
+        x = TOP & ~ ( x | ( ( x & BOT ) + BOT ) ) ; // Process 16 characters at once: set high order bit of each field ON if steps needed.
         if ( x ) steps += stepsin[ 65535 & ( x | ( x >> 17 ) | ( x >> 34 ) | ( x >> 51 ) ) ] ; }
     return steps ; }
 #endif
