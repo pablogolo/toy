@@ -515,8 +515,8 @@ void fixupdn( int from , int side , int nitroot ) {
                x |= x - ( x >> 3 ) ;
                upmatrix[ at ] [ b ] = ( upmatrix[ blow ] [ b ] & ~ x ) | ( x & ( matrix[ at ] [ b ] | upmatrix[ blow ] [ b ] & bakmat[ at ] [ b ] ) ) ;
                unmat[ at ] [ b ] = upmatrix[ at ] [ b ] | upmatrix[ blow ] [ b ] ; }
-           if ( upmatrix[ at ] [ b ] != was ) 
-             if ( at >= nt ) {
+           if ( at >= nt ) 
+              if ( upmatrix[ at ] [ b ] != was ) {
                  oplist[ nn ++ ] = lef [ at ] ; 
                  oplist[ nn ++ ] = rig [ at ] ; }}}}
 

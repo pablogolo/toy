@@ -417,7 +417,7 @@ void fixupdn( int from , int side , int nitroot ) {
            if ( side < nt ) unmat[ side ] [ b ] = matrix[ side ] [ b ] ;
            else
               if ( upmatrix[ side ] [ b ] != matrix[ side ] [ b ] ) {
-                upmatrix[ side ] [ b ] = matrix[ side ] [ b ] ; 
+                upmatrix[ side ] [ b ] = matrix[ side ] [ b ] ;
                 oplist[ nn ++ ] = lef [ side ] ; 
                 oplist[ nn ++ ] = rig [ side ] ; }
        while ( n < nn ) {
@@ -433,8 +433,8 @@ void fixupdn( int from , int side , int nitroot ) {
               else {
                   upmatrix[ at ] [ b ] = matrix[ at ] [ b ] | ( upmatrix[ blow ] [ b ] & bakmat[ at ] [ b ] ) ;
                   unmat [ at ] [ b ] = upmatrix[ at ] [ b ] | upmatrix[ blow ] [ b ] ; }
-           if ( upmatrix[ at ] [ b ] != was ) 
-             if ( at >= nt ) {
+           if ( at >= nt ) 
+              if ( upmatrix[ at ] [ b ] != was ) {
                  oplist[ nn ++ ] = lef [ at ] ; 
                  oplist[ nn ++ ] = rig [ at ] ; }}}}
 
