@@ -122,7 +122,7 @@ void readata ( void ) {
     if ( nt < 4 ) errout ( "Too few taxa" ) ; 
     if ( ( nc + 15 ) / 16 > MAXC ) errout ( "Too many characters" ) ; 
     if ( usnc < 1 ) errout ( "Too few characters " ) ;
-    nc = ( usnc + 15 ) / 16 ; 
+    nc = ( usnc + 15 ) / 16 ;
     for ( a = 0 ; a < nt ; ++ a )
        for ( b = 0 ; b < nc ; ++ b )
           matrix[ a ] [ b ] = 0 ; 
@@ -153,7 +153,16 @@ void readata ( void ) {
         for ( a = 0 ; a < nt ; ++ a ) {
            matrix[ a ] [ inn ] |= set ; 
            upmatrix[ a ] [ inn ] = matrix[ a ] [ inn ] ;
-           if ( !a ) unmat[ a ] [ inn ] = matrix[ a ] [ inn ] ; }}}
+           if ( !a ) unmat[ a ] [ inn ] = matrix[ a ] [ inn ] ; }}
+#ifdef SQUEEZE_IT
+    if ( ( nc & 1 ) ) {
+        inn = nc ++ ;
+        set = -1 ;
+        for ( a = 0 ; a < nt ; ++ a ) {
+           matrix[ a ] [ inn ] = upmatrix[ a ] [ inn ] = set ; 
+           if ( !a ) unmat[ a ] [ inn ] = matrix[ a ] [ inn ] ; }}
+#endif        
+    }
 
 int listabove( int * list , int from , int doterms ) {
     int * done , * todo , at ;
@@ -201,16 +210,36 @@ int fichop( int passes , int from ) {
                unmat[ at ] [ b ] = upmatrix[ at ] [ b ] | upmatrix[ blow ] [ b ] ; }}}
     return steps ; }        
 
+#ifdef SQUEEZE_IT
+int testamove ( int what , int root , int where ) {  // For very large datasets, this one can save time relative to the version below...
+    int b , steps = 0 ;
+    unsigned long long int x , y , z , * one , * other ;
+    if ( what == root && what < nt ) one = matrix[ root ] ;
+    else one = unmat[ root ] ;
+    other = unmat[ where ] ; 
+    for ( b = 0 ; b < nc && steps < globest ; b += 2 ) {
+        x = * one ++ & * other ++ ;
+        y = * one ++ & * other ++ ;
+        x = TOP & ~ ( x | ( ( x & BOT ) + BOT ) ) ;
+        y = TOP & ~ ( y | ( ( y & BOT ) + BOT ) ) ;
+        z = x | y ; 
+        if ( z ) {
+            steps += stepsin[ 65535 & ( z | ( z >> 17 ) | ( z >> 34 ) | ( z >> 51 ) ) ] ;
+            z = x & y ;
+            if ( z ) steps += stepsin[ 65535 & ( z | ( z >> 17 ) | ( z >> 34 ) | ( z >> 51 ) ) ] ; }}
+    return steps ; }
+#else
 int testamove ( int what , int root , int where ) {
     int b , steps = 0 ;
     unsigned long long int x ; 
-    for ( b = 0 ; b < nc && steps < globest ; ++ b ) {
+    for ( b = 0 ; b < nc && steps < globest ; b ++ ) {
         if ( what == root && what < nt ) 
              x = matrix[ root ] [ b ] & unmat[ where ] [ b ] ;
         else x = unmat[ root ] [ b ] & unmat[ where ] [ b ] ;
         x = TOP & ~ ( x | ( ( x & BOT ) + BOT ) ) ;
         if ( x ) steps += stepsin[ 65535 & ( x | ( x >> 17 ) | ( x >> 34 ) | ( x >> 51 ) ) ] ; }
     return steps ; }
+#endif
 
 void randomize( void ) {
    int i , n , q , * lp = ladd + 1 , left = nt - 1 ; 
