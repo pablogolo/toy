@@ -241,7 +241,7 @@ int tbrswap( int ismult ) {
             divsteps = totbest - globest ; 
             goodmvpt = goodmvs ;
             if ( oplimit ) 
-            for ( i = 1 ; i < j ; ++ i ) {
+             for ( i = 1 ; i < j ; ++ i ) {
                ++ nmoves ; 
                this = testamove( 0 , 0 , trylist[ i ] ) ;
                totscore = divsteps + this ; 
@@ -275,7 +275,7 @@ int tbrswap( int ismult ) {
             else oplimit = globest ;
             divsteps = totbest - globest ;
             if ( oplimit ) 
-            for ( i = 2 ; i < nroots ; ++ i ) {
+             for ( i = 2 ; i < nroots ; ++ i ) {
                goodmvpt = goodmvs ;  
                for ( j = 0 ; j < nlocs ; ++ j ) {
                    ++ nmoves ; 
