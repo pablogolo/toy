@@ -239,7 +239,8 @@ int tbrswap( int ismult ) {
             if ( ismult && nstored < maxtrees ) oplimit = globest + 1 ;
             else oplimit = globest ;
             divsteps = totbest - globest ; 
-            goodmvpt = goodmvs ; 
+            goodmvpt = goodmvs ;
+            if ( oplimit ) 
             for ( i = 1 ; i < j ; ++ i ) {
                ++ nmoves ; 
                this = testamove( 0 , 0 , trylist[ i ] ) ;
@@ -253,7 +254,7 @@ int tbrswap( int ismult ) {
                    globest = this ; 
                    if ( !this && !ismult ) break ;
                    oplimit = this ;
-                   if ( ismult ) ++ oplimit ; }
+                   if ( ismult && nstored < maxtrees ) ++ oplimit ; }
                if ( totscore == gloglobest && ismult ) {
                    if ( anc [ trylist[ i ] ] == cut ) continue ; 
                    goodmvpt->dest = 0 ;
@@ -272,7 +273,8 @@ int tbrswap( int ismult ) {
             globest = testamove ( cut , rootlist[ 2 ] , nitloc ) ;
             if ( ismult && nstored < maxtrees ) oplimit = globest + 1 ;
             else oplimit = globest ;
-            divsteps = totbest - globest ; 
+            divsteps = totbest - globest ;
+            if ( oplimit ) 
             for ( i = 2 ; i < nroots ; ++ i ) {
                goodmvpt = goodmvs ;  
                for ( j = 0 ; j < nlocs ; ++ j ) {
@@ -288,7 +290,7 @@ int tbrswap( int ismult ) {
                        globest = this ; 
                        if ( !this && !ismult ) { i = nroots ; break ; }
                        oplimit = this ;
-                       if ( ismult ) ++ oplimit ; }
+                       if ( ismult && nstored < maxtrees ) ++ oplimit ; }
                    if ( totscore == gloglobest && ismult ) {
                        if ( trylist[ i ] == nitloc && anc[ rootlist[ i ] ] == cut ) continue ; 
                        goodmvpt->dest = trylist[ j ] ;
@@ -456,10 +458,7 @@ void compare_n_save ( GoodMvTyp * goodmvpt , int cut , int nitroot ) {
         if ( dest ) {
              if ( cut > nt && chgdroot ) slide_down( cut , root , 1 ) ; 
              fixupdn( anc[ nitloc ] , cut , 0 ) ; }
-        else fichop ( 2 , sis[ 0 ] ) ;
-        if ( nstored == maxtrees ) {
-            -- oplimit ; // this can happen only once per clip!
-            break ; }}}
+        else fichop ( 2 , sis[ 0 ] ) ; }}
    
 void main ( int argc , char ** argv ) {
     int doswap = 1 , i , dotree = 0 ; 
@@ -487,7 +486,7 @@ void main ( int argc , char ** argv ) {
         if ( argv[ i ][ 0 ] == 'm' ) {
             multrees = 1 ;
             if ( isdigit ( argv[ i ][ 1 ] ) ) 
-              if ( ( maxtrees = atoi ( argv[ i ]+1 ) ) < 2 ) errout ( "maxtrees (for global swapping) must be 2 or more!\n" ) ; }
+              if ( ( maxtrees = atoi ( argv[ i ]+1 ) ) < 1 ) errout ( "maxtrees must be 1 or more!\n" ) ; }
         if ( argv[ i ][ 0 ] == '+' ) { wagstart = 0 ; read_tree ( argv[ i ] + 1 ) ; }
         if ( argv[ i ][ 0 ] == 't' ) dotree = 1 ; }
     alloc_maxtrees () ; 
