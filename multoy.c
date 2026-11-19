@@ -253,7 +253,7 @@ int tbrswap( int ismult ) {
                    globest = this ; 
                    if ( !this && !ismult ) break ;
                    oplimit = this ;
-                   if ( ismult && nstored < maxtrees ) ++ oplimit ; }
+                   if ( ismult ) ++ oplimit ; }
                if ( totscore == gloglobest && ismult ) {
                    if ( anc [ trylist[ i ] ] == cut ) continue ; 
                    goodmvpt->dest = 0 ;
@@ -288,7 +288,7 @@ int tbrswap( int ismult ) {
                        globest = this ; 
                        if ( !this && !ismult ) { i = nroots ; break ; }
                        oplimit = this ;
-                       if ( ismult && nstored < maxtrees ) ++ oplimit ; }
+                       if ( ismult ) ++ oplimit ; }
                    if ( totscore == gloglobest && ismult ) {
                        if ( trylist[ i ] == nitloc && anc[ rootlist[ i ] ] == cut ) continue ; 
                        goodmvpt->dest = trylist[ j ] ;
@@ -456,7 +456,10 @@ void compare_n_save ( GoodMvTyp * goodmvpt , int cut , int nitroot ) {
         if ( dest ) {
              if ( cut > nt && chgdroot ) slide_down( cut , root , 1 ) ; 
              fixupdn( anc[ nitloc ] , cut , 0 ) ; }
-        else fichop ( 2 , sis[ 0 ] ) ; }}
+        else fichop ( 2 , sis[ 0 ] ) ;
+        if ( nstored == maxtrees ) {
+            -- oplimit ; // this can happen only once per clip!
+            break ; }}}
    
 void main ( int argc , char ** argv ) {
     int doswap = 1 , i , dotree = 0 ; 
@@ -484,7 +487,7 @@ void main ( int argc , char ** argv ) {
         if ( argv[ i ][ 0 ] == 'm' ) {
             multrees = 1 ;
             if ( isdigit ( argv[ i ][ 1 ] ) ) 
-              if ( ( maxtrees = atoi ( argv[ i ]+1 ) ) < 1 ) errout ( "maxtrees must be 1 or more!\n" ) ; }
+              if ( ( maxtrees = atoi ( argv[ i ]+1 ) ) < 2 ) errout ( "maxtrees (for global swapping) must be 2 or more!\n" ) ; }
         if ( argv[ i ][ 0 ] == '+' ) { wagstart = 0 ; read_tree ( argv[ i ] + 1 ) ; }
         if ( argv[ i ][ 0 ] == 't' ) dotree = 1 ; }
     alloc_maxtrees () ; 
