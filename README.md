@@ -2,6 +2,8 @@ All the programs included here are small, minimalistic standalone programs, inte
 
 These programs (in increasing order of size/efficiency) are MINITOY / TOY / INCTOY / DNATOY / PARATOY.
 
+The latest addition is MULTOY (added Nov. 2026, with incremental optimization as in INCTOY but no parallel optimization as in PARATOY, doing multiple starting trees followed by global branch-swapping saving trees --all different when zero-length branches collapsed). Slightly more elaborate than the other ones, but still intended as pedagogical (and with only about 650 lines of code).
+
 TOY reads a dataset, does a Wagner tree + TBR, saves final tree in parenthetical notation (TNT format) and [optionally] as a tree-diagram. 
 
 Compile with 
@@ -21,6 +23,7 @@ To run the example datasets (in a folder of their own), you can try:
     minitoy zilla.tnt > result.tre 
     toy zilla.tnt > result.tre 
     inctoy zilla.tnt > result.tre 
+
 or 
 
     dnatoy dnazilla.tnt > result.tre 
