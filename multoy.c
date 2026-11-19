@@ -236,7 +236,7 @@ int tbrswap( int ismult ) {
             fichop ( 2 , sis[ 0 ] ) ;
             oplimit = BIGINT ;
             globest = testamove( 0 , 0 , cut ) ;
-            if ( ismult ) oplimit = globest + 1 ;
+            if ( ismult && nstored < maxtrees ) oplimit = globest + 1 ;
             else oplimit = globest ;
             divsteps = totbest - globest ; 
             goodmvpt = goodmvs ; 
@@ -253,7 +253,7 @@ int tbrswap( int ismult ) {
                    globest = this ; 
                    if ( !this && !ismult ) break ;
                    oplimit = this ;
-                   if ( ismult ) ++ oplimit ; }
+                   if ( ismult && nstored < maxtrees ) ++ oplimit ; }
                if ( totscore == gloglobest && ismult ) {
                    if ( anc [ trylist[ i ] ] == cut ) continue ; 
                    goodmvpt->dest = 0 ;
@@ -270,7 +270,7 @@ int tbrswap( int ismult ) {
             if ( dospr ) nroots = 3 ; 
             oplimit = BIGINT ; 
             globest = testamove ( cut , rootlist[ 2 ] , nitloc ) ;
-            if ( ismult ) oplimit = globest + 1 ;
+            if ( ismult && nstored < maxtrees ) oplimit = globest + 1 ;
             else oplimit = globest ;
             divsteps = totbest - globest ; 
             for ( i = 2 ; i < nroots ; ++ i ) {
@@ -288,7 +288,7 @@ int tbrswap( int ismult ) {
                        globest = this ; 
                        if ( !this && !ismult ) { i = nroots ; break ; }
                        oplimit = this ;
-                       if ( ismult ) ++ oplimit ; }
+                       if ( ismult && nstored < maxtrees ) ++ oplimit ; }
                    if ( totscore == gloglobest && ismult ) {
                        if ( trylist[ i ] == nitloc && anc[ rootlist[ i ] ] == cut ) continue ; 
                        goodmvpt->dest = trylist[ j ] ;
