@@ -241,25 +241,25 @@ int tbrswap( int ismult ) {
             divsteps = totbest - globest ; 
             goodmvpt = goodmvs ;
             if ( oplimit ) 
-             for ( i = 1 ; i < j ; ++ i ) {
-               ++ nmoves ; 
-               this = testamove( 0 , 0 , trylist[ i ] ) ;
-               totscore = divsteps + this ; 
-               if ( this < globest ) {
-                   if ( ismult ) {
-                       gloglobest = totbest = totscore ; nstored = 0 ; goodmvpt = goodmvs ; success = 1 ; }
-                   rounds = 1 ; 
-                   besroot = 0 ; 
-                   besloc = trylist[ i ] ;
-                   globest = this ; 
-                   if ( !this && !ismult ) break ;
-                   oplimit = this ;
-                   if ( ismult && nstored < maxtrees ) ++ oplimit ; }
-               if ( totscore == gloglobest && ismult ) {
-                   if ( anc [ trylist[ i ] ] == cut ) continue ; 
-                   goodmvpt->dest = 0 ;
-                   goodmvpt->root = trylist[ i ] ;
-                   ++ goodmvpt ; }}
+                for ( i = 1 ; i < j ; ++ i ) {
+                   ++ nmoves ; 
+                   this = testamove( 0 , 0 , trylist[ i ] ) ;
+                   totscore = divsteps + this ; 
+                   if ( this < globest ) {
+                       if ( ismult ) {
+                           gloglobest = totbest = totscore ; nstored = 0 ; goodmvpt = goodmvs ; success = 1 ; }
+                       rounds = 1 ; 
+                       besroot = 0 ; 
+                       besloc = trylist[ i ] ;
+                       globest = this ; 
+                       if ( !this && !ismult ) break ;
+                       oplimit = this ;
+                       if ( ismult && nstored < maxtrees ) ++ oplimit ; }
+                   if ( totscore == gloglobest && ismult ) {
+                       if ( anc [ trylist[ i ] ] == cut ) continue ; 
+                       goodmvpt->dest = 0 ;
+                       goodmvpt->root = trylist[ i ] ;
+                       ++ goodmvpt ; }}
             if ( goodmvpt > goodmvs )
                 compare_n_save ( goodmvpt , cut , nitroot ) ; }
         else {
@@ -275,27 +275,27 @@ int tbrswap( int ismult ) {
             else oplimit = globest ;
             divsteps = totbest - globest ;
             if ( oplimit ) 
-             for ( i = 2 ; i < nroots ; ++ i ) {
-               goodmvpt = goodmvs ;  
-               for ( j = 0 ; j < nlocs ; ++ j ) {
-                   ++ nmoves ; 
-                   this = testamove( cut , rootlist[ i ] , trylist[ j ] ) ;
-                   totscore = divsteps + this ; 
-                   if ( this < globest ) {
-                       if ( ismult ) {
-                           gloglobest = totbest = totscore ; nstored = 0 ; goodmvpt = goodmvs ; success = 1 ; }
-                       rounds = 1 ; 
-                       besroot = rootlist[ i ] ; 
-                       besloc = trylist[ j ] ;
-                       globest = this ; 
-                       if ( !this && !ismult ) { i = nroots ; break ; }
-                       oplimit = this ;
-                       if ( ismult && nstored < maxtrees ) ++ oplimit ; }
-                   if ( totscore == gloglobest && ismult ) {
-                       if ( trylist[ i ] == nitloc && anc[ rootlist[ i ] ] == cut ) continue ; 
-                       goodmvpt->dest = trylist[ j ] ;
-                       goodmvpt->root = rootlist [ i ] ;
-                       ++ goodmvpt ; }}
+                for ( i = 2 ; i < nroots ; ++ i ) {
+                   goodmvpt = goodmvs ;  
+                   for ( j = 0 ; j < nlocs ; ++ j ) {
+                       ++ nmoves ; 
+                       this = testamove( cut , rootlist[ i ] , trylist[ j ] ) ;
+                       totscore = divsteps + this ; 
+                       if ( this < globest ) {
+                           if ( ismult ) {
+                               gloglobest = totbest = totscore ; nstored = 0 ; goodmvpt = goodmvs ; success = 1 ; }
+                           rounds = 1 ; 
+                           besroot = rootlist[ i ] ; 
+                           besloc = trylist[ j ] ;
+                           globest = this ; 
+                           if ( !this && !ismult ) { i = nroots ; break ; }
+                           oplimit = this ;
+                           if ( ismult && nstored < maxtrees ) ++ oplimit ; }
+                       if ( totscore == gloglobest && ismult ) {
+                           if ( trylist[ i ] == nitloc && anc[ rootlist[ i ] ] == cut ) continue ; 
+                           goodmvpt->dest = trylist[ j ] ;
+                           goodmvpt->root = rootlist [ i ] ;
+                           ++ goodmvpt ; }}
                if ( goodmvpt > goodmvs )
                    compare_n_save ( goodmvpt , cut , nitroot ) ; }}
         if ( nitloc != besloc || besroot != nitroot ) ++ nswitches ;
@@ -458,7 +458,8 @@ void compare_n_save ( GoodMvTyp * goodmvpt , int cut , int nitroot ) {
         if ( dest ) {
              if ( cut > nt && chgdroot ) slide_down( cut , root , 1 ) ; 
              fixupdn( anc[ nitloc ] , cut , 0 ) ; }
-        else fichop ( 2 , sis[ 0 ] ) ; }}
+        else fichop ( 2 , sis[ 0 ] ) ; 
+        if ( nstored == maxtrees ) { oplimit -- ; break ; }}}
    
 void main ( int argc , char ** argv ) {
     int doswap = 1 , i , dotree = 0 ; 
