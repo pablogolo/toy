@@ -2,7 +2,7 @@ All the programs included here are small, minimalistic standalone programs, inte
 
 These programs (in increasing order of size/efficiency) are MINITOY / TOY / INCTOY / DNATOY / PARATOY.
 
-The latest addition is MULTOY (added Nov. 2026, with incremental optimization as in INCTOY but no parallel optimization as in PARATOY, doing multiple starting trees followed by global branch-swapping saving trees --all different when zero-length branches collapsed). Slightly more elaborate than the other ones, but still intended as pedagogical (and with only about 650 lines of code).
+The latest addition is MULTOY (added Nov. 2026, with incremental optimization as in INCTOY but no parallel optimization as in PARATOY, doing multiple starting trees followed by global branch-swapping saving multiple trees --all different when zero-length branches collapsed). Slightly more elaborate than the other ones, but still intended as pedagogical (and with only about 650 lines of code).
 
 TOY reads a dataset, does a Wagner tree + TBR, saves final tree in parenthetical notation (TNT format) and [optionally] as a tree-diagram. 
 
